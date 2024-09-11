@@ -1,6 +1,6 @@
 {
-  "tenantDomain": "authaction-sample.eu.authaction.com",
-  "clientId": "bKWaEhQn8tXBj6pyA4EhCHtLmfmImoX5",
+  "tenantDomain": "your-authaction-tenant-domain",
+  "clientId": "your-authaction-app-client-id",
   "redirectUri": "http://localhost:5173/callback",
   "logoutRedirectUri": "http://localhost:5173/logout-callback"
 }
