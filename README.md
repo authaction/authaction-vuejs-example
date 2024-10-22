@@ -40,8 +40,8 @@ Before using this application, ensure you have:
    ```bash
    VITE_AUTHACTION_TENANT_DOMAIN=your-authaction-tenant-domain
    VITE_AUTHACTION_CLIENT_ID=your-authaction-app-clientid
-   VITE_AUTHACTION_REDIRECT_URI=http://localhost:3000/
-   VITE_AUTHACTION_LOGOUT_REDIRECT_URI=http://localhost:3000/
+   VITE_AUTHACTION_REDIRECT_URI=http://localhost:3000/callback
+   VITE_AUTHACTION_LOGOUT_REDIRECT_URI=http://localhost:3000/logout-callback
    ```
 
 ## Usage
