@@ -1,13 +1,12 @@
 import { UserManager, WebStorageStateStore } from 'oidc-client-ts'
-import AuthConfig from '../config.json'
 
 const oidcConfig = {
-  authority: `https://${AuthConfig.tenantDomain}`,
-  client_id: AuthConfig.clientId,
-  redirect_uri: AuthConfig.redirectUri,
+  authority: `https://${import.meta.env.VITE_AUTHACTION_TENANT_DOMAIN}`,
+  client_id: import.meta.env.VITE_AUTHACTION_CLIENT_ID,
+  redirect_uri: import.meta.env.VITE_AUTHACTION_REDIRECT_URI,
   response_type: 'code',
   scope: 'openid profile email',
-  post_logout_redirect_uri: AuthConfig.logoutRedirectUri,
+  post_logout_redirect_uri: import.meta.env.VITE_AUTHACTION_LOGOUT_REDIRECT_URI,
   userStore: new WebStorageStateStore({ store: window.localStorage })
 }
 
