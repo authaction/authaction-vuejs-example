@@ -67,7 +67,7 @@ Before using this application, ensure you have:
 
 - **AuthService Setup**:
   - Configures the OAuth2 authentication using `oidc-client-ts`.
-  - Sets up `authority`, `client_id`, `redirect_uri`, and `post_logout_redirect_uri` based on the credentials from `config.json`.
+  - Sets up `authority`, `client_id`, `redirect_uri`, and `post_logout_redirect_uri` based on the credentials from `.env`.
   - `onSigninCallback` handles the cleanup of the URL after the sign-in callback.
 
 ### Application Component (`src/components/TheWelcome.vue`)
