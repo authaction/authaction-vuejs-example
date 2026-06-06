@@ -3,13 +3,15 @@ import './assets/main.css'
 import { createApp } from 'vue'
 import App from './App.vue'
 import router from './router'
-import { authService } from './services/AuthService'
+import { createAuthAction } from '@authaction/web-sdk/vue'
 
 const app = createApp(App)
 
-// Optionally expose authService globally, if needed
-app.config.globalProperties.$authService = authService
-
 app.use(router)
+app.use(createAuthAction({
+  domain: import.meta.env.VITE_AUTHACTION_DOMAIN,
+  clientId: import.meta.env.VITE_AUTHACTION_CLIENT_ID,
+  redirectUri: import.meta.env.VITE_AUTHACTION_REDIRECT_URI,
+}))
 
 app.mount('#app')
