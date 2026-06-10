@@ -16,5 +16,7 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div>Completing login...</div>
+  <div class="screen-center">
+    <div class="spinner" aria-label="Completing sign in" />
+  </div>
 </template>
