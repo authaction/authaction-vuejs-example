@@ -15,7 +15,10 @@ const profileFields = computed(() => {
 })
 
 const avatarInitial = computed(() => state.user?.name?.[0]?.toUpperCase() ?? 'U')
-const rawClaims = computed(() => JSON.stringify(state.user, null, 2))
+const rawClaims = computed(() => {
+  const { access_token, profile, ...claims } = state.user ?? {}
+  return JSON.stringify(claims, null, 2)
+})
 </script>
 
 <template>
