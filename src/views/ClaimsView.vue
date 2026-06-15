@@ -1,25 +1,30 @@
 <script setup lang="ts">
-import { watch } from 'vue'
+import { computed, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthAction } from '@authaction/web-sdk/vue'
 
 const router = useRouter()
-const { state, loginWithRedirect } = useAuthAction()
+const { state, logout } = useAuthAction()
 
 watch(
   () => [state.isLoading, state.isAuthenticated],
   ([loading, auth]) => {
-    if (!loading && auth) router.replace('/claims')
+    if (!loading && !auth) router.replace('/')
   },
-  { immediate: true },
 )
 
-const onLogin = () => loginWithRedirect()
-const onSignup = () => loginWithRedirect({ authorizationParams: { screen_hint: 'signup' } })
+const rawClaims = computed(() => {
+  const { access_token, profile, ...claims } = (state.user as Record<string, unknown>) ?? {}
+  return JSON.stringify(claims, null, 2)
+})
+
+const initials = computed(() =>
+  state.user?.name?.[0]?.toUpperCase() ?? 'U',
+)
 </script>
 
 <template>
-  <div v-if="state.isLoading || state.isAuthenticated" class="screen-center">
+  <div v-if="state.isLoading || !state.isAuthenticated" class="screen-center">
     <div class="spinner" aria-label="Loading" />
   </div>
 
@@ -31,20 +36,15 @@ const onSignup = () => loginWithRedirect({ authorizationParams: { screen_hint: '
       </div>
       <div class="navbar-actions">
         <span class="demo-badge">Demo App</span>
-        <button class="btn btn-ghost" @click="onLogin">Log in</button>
-        <button class="btn btn-primary btn-sm" @click="onSignup">Sign up</button>
+        <div class="avatar-sm">{{ initials }}</div>
+        <button class="btn btn-ghost" @click="logout()">Sign out</button>
       </div>
     </nav>
 
-    <main class="hero">
-      <p class="hero-eyebrow">Identity &amp; Access Management</p>
-      <h1 class="hero-title">Authentication made simple</h1>
-      <p class="hero-subtitle">
-        Secure, fast, and developer-friendly OAuth2 authentication for your applications.
-      </p>
-      <div class="hero-actions">
-        <button class="btn btn-primary btn-lg" @click="onSignup">Get started free</button>
-        <button class="btn btn-outline btn-lg" @click="onLogin">Log in</button>
+    <main class="claims-main">
+      <div class="claims-card">
+        <h1 class="claims-title">Raw Claims</h1>
+        <pre class="claims-content">{{ rawClaims }}</pre>
       </div>
     </main>
   </div>
@@ -119,47 +119,57 @@ const onSignup = () => loginWithRedirect({ authorizationParams: { screen_hint: '
   letter-spacing: 0.02em;
 }
 
-.hero {
-  flex: 1;
+.avatar-sm {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: var(--color-primary);
+  color: #fff;
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
-  text-align: center;
-  padding: 80px 24px;
-}
-
-.hero-eyebrow {
-  margin: 0 0 16px;
   font-size: 13px;
+  font-weight: 700;
+}
+
+.claims-main {
+  flex: 1;
+  padding: 40px 24px;
+  max-width: 800px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+.claims-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-card);
+  overflow: hidden;
+}
+
+.claims-title {
+  margin: 0;
+  padding: 20px 24px;
+  font-size: 15px;
   font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--color-primary);
-}
-
-.hero-title {
-  margin: 0 0 20px;
-  font-size: clamp(32px, 5vw, 52px);
-  font-weight: 800;
-  line-height: 1.15;
-  color: var(--color-text);
-  max-width: 640px;
-}
-
-.hero-subtitle {
-  margin: 0 0 40px;
-  font-size: 17px;
-  line-height: 1.6;
   color: var(--color-text-muted);
-  max-width: 480px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  border-bottom: 1px solid var(--color-border);
+  background: var(--color-raw-bg);
 }
 
-.hero-actions {
-  display: flex;
-  gap: 12px;
-  flex-wrap: wrap;
-  justify-content: center;
+.claims-content {
+  margin: 0;
+  padding: 24px;
+  font-family: ui-monospace, 'SFMono-Regular', Menlo, Monaco, Consolas, monospace;
+  font-size: 13px;
+  line-height: 1.7;
+  color: var(--color-text);
+  background: var(--color-surface);
+  overflow-x: auto;
+  white-space: pre;
 }
 
 .btn {
@@ -172,27 +182,7 @@ const onSignup = () => loginWithRedirect({ authorizationParams: { screen_hint: '
   border-radius: var(--radius-btn);
   border: none;
   cursor: pointer;
-  transition: background-color 0.15s, border-color 0.15s, color 0.15s;
-}
-
-.btn-primary {
-  background-color: var(--color-primary);
-  color: #ffffff;
-}
-
-.btn-primary:hover {
-  background-color: var(--color-primary-hover);
-}
-
-.btn-outline {
-  background-color: transparent;
-  color: var(--color-text);
-  border: 1px solid var(--color-border);
-}
-
-.btn-outline:hover {
-  border-color: #cbd5e0;
-  background-color: var(--color-bg);
+  transition: background-color 0.15s, color 0.15s;
 }
 
 .btn-ghost {
@@ -206,15 +196,5 @@ const onSignup = () => loginWithRedirect({ authorizationParams: { screen_hint: '
   color: var(--color-text);
   background-color: var(--color-bg);
   border-radius: var(--radius-btn);
-}
-
-.btn-sm {
-  padding: 7px 16px;
-  font-size: 13px;
-}
-
-.btn-lg {
-  padding: 13px 28px;
-  font-size: 15px;
 }
 </style>

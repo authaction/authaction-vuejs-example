@@ -10,6 +10,11 @@ const router = createRouter({
       component: HomeView,
     },
     {
+      path: '/claims',
+      name: 'claims',
+      component: () => import('../views/ClaimsView.vue'),
+    },
+    {
       path: '/callback',
       component: () => import('../views/CallbackView.vue'),
     },

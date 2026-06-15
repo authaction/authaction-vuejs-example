@@ -10,7 +10,7 @@ onMounted(async () => {
   try {
     await handleRedirectCallback()
   } finally {
-    router.replace('/')
+    router.replace('/claims')
   }
 })
 </script>
